@@ -1,0 +1,61 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-id: "lb-wz9hvpgjvanys2lso2u7f"
+  name: mall-operation-platform
+  namespace: yc
+  labels:
+    name: mall-operation-platform
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+  selector:
+    app: mall-operation-platform
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mall-operation-platform
+  namespace: yc
+  labels:
+    app: mall-operation-platform
+spec:
+  selector:
+    matchLabels:
+      app: mall-operation-platform
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mall-operation-platform
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: mall-operation-platform
+        image: IMAGE
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 1
+            memory: 1024Mi
+          limits:
+            cpu: 2
+            memory: 2048Mi
+        volumeMounts:
+          - name: mall-operation-platform
+            mountPath: /etc/nginx/nginx.conf
+            subPath: nginx.conf
+      volumes:
+        - name: mall-operation-platform
+          configMap:
+            name: mall-operation-platform
+            items:
+              - key: nginx.conf
+                path: nginx.conf
+      

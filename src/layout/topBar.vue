@@ -1,0 +1,302 @@
+<template>
+	<div>
+		<el-header class="platform-topBar">
+			<img class="logo" :src="LOGO" />
+			<div class="name">{{ $config.PLATFORM_NAME }}</div>
+			<el-button type="text" class="env-symbol" v-if="showEnvSymbol" @click="logout">[{{ environment }}]</el-button>
+			<div class="blank">
+				<template>
+					<i class="el-icon-setting setting-icon" @click="goToSetting" />
+					<div class="operation">
+						<span class="person">
+							<i class="el-icon-user-solid user-icon" />
+							<span class="username">{{ username }}</span>
+						</span>
+
+						<!-- [退出] -->
+						<i class="el-icon-switch-button logout" @click="logout">退出</i>
+					</div>
+				</template>
+			</div>
+		</el-header>
+		<!-- 修改密码对话框 -->
+		<el-dialog title="修改密码" :visible.sync="changePasswordModal.show" class="changePasswordModal" width="35%" v-drag>
+			<p class="tips">
+				说明：
+				<br />
+				1. 密码修改之后需要重新登录一次。
+				<br />
+				2. 密码长度须为 6-12 位，可包含字母、数字和符号。且两次密码需一致。
+				<br />
+			</p>
+			<el-form
+				:model="changePasswordModal"
+				status-icon
+				:rules="rules"
+				ref="password"
+				label-width="100px"
+				label-position="left"
+				size="small"
+			>
+				<el-form-item label="原密码" prop="oldPassword">
+					<el-input type="password" v-model="changePasswordModal.oldPassword" autocomplete="off" />
+				</el-form-item>
+				<el-form-item label="新密码" prop="password">
+					<el-input type="password" v-model="changePasswordModal.password" autocomplete="off" />
+				</el-form-item>
+				<el-form-item label="确认密码" prop="confirmPassword">
+					<el-input type="password" v-model="changePasswordModal.confirmPassword" autocomplete="off" />
+				</el-form-item>
+			</el-form>
+			<span slot="footer">
+				<el-button @click.stop="changePasswordModal.show = false">取 消</el-button>
+				<el-button type="primary" @click.stop="confirmChangePassword">保存</el-button>
+			</span>
+		</el-dialog>
+	</div>
+</template>
+
+<script>
+import LOGO from '@/assets/logo.jpeg';
+import LoginManager from 'util/login';
+import qs from 'querystring';
+
+export default {
+	name: 'topBar',
+	data() {
+		const equalCheck = (rule, value, callback) => {
+			if (value === '') {
+				callback(new Error('请输入确认密码'));
+			} else if (value !== this.changePasswordModal.password) {
+				callback(new Error('两次输入密码不一致!'));
+			} else if (this.changePasswordModal.oldPassword === this.changePasswordModal.password) {
+				callback(new Error('新密码不能与旧密码一致!'));
+			} else {
+				callback();
+			}
+		};
+		return {
+			LOGO,
+			loading: null,
+			changePasswordModal: {
+				show: false,
+				oldPassword: '',
+				password: '',
+				confirmPassword: '',
+			},
+			rules: {
+				oldPassword: [{ required: true, trigger: 'blur', message: '原密码必填' }],
+				password: [{ required: true, trigger: 'blur', message: '6-12位字母数字混合密码' }],
+				confirmPassword: [
+					{ required: true, validator: equalCheck, trigger: 'blur', message: '请确保确认密码与新密码一致' },
+				],
+			},
+		};
+	},
+	computed: {
+		username() {
+			return this.$store.getters['user/getUsername'];
+		},
+		environment() {
+			const ENV_MAP = {
+				dev: '开发环境',
+				test: '测试环境',
+				uat: 'UAT环境',
+				prod: '',
+			};
+			return ENV_MAP[this.$store.getters['system/getEnv']];
+		},
+		showEnvSymbol() {
+			return /dev|test|uat/.test(this.$store.getters['system/getEnv']);
+		},
+	},
+	methods: {
+		goTo(href) {
+			if (!href) return;
+			this.$router.history.push(href);
+		},
+		// 修改密码
+		changePassword() {
+			this.changePasswordModal = {
+				show: true,
+				oldPassword: '',
+				password: '',
+				confirmPassword: '',
+			};
+		},
+		// 修改密码确认回调
+		confirmChangePassword() {
+			this.$refs.password.validate(valid => {
+				if (valid) {
+					this.modifyPassword(this.changePasswordModal);
+					this.changePasswordModal.show = false;
+				} else {
+					console.log('error submit!!');
+					return false;
+				}
+			});
+		},
+		// 查看用户信息
+		// viewPersonInfo() {
+		// 	this.$go(`update_user?id=${this.$store.state.userInfo.userId}&operatorStatus=0&title=编辑用户`);
+		// },
+		// 退出系统
+		// logoutInqury() {
+		// 	this.$confirm('确定退出系统吗', '提示', {
+		// 		confirmButtonText: '确定',
+		// 		cancelButtonText: '取消',
+		// 		showClose: false,
+		// 		closeOnClickModal: false,
+		// 		iconClass: 'el-icon-switch-button logclose',
+		// 	})
+		// 		.then(() => {
+		// 			this.logout();
+		// 		})
+		// 		.catch(() => {});
+		// },
+		// 注销
+		async logout() {
+			this.loading = this.$loading({
+				lock: true,
+				text: '正在注销...',
+				spinner: 'el-icon-switch-button',
+				background: 'rgba(255,255,255,0.8)',
+			});
+
+			await this.$fetch({
+				method: 'POST',
+				data: qs.stringify({
+					access_token: this.$store.getters['user/getToken'],
+				}),
+				url: 'login/lo/',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					Authorization: this.$config.DEFAULT_LOGIN_TOKEN,
+				},
+			});
+
+			setTimeout(() => {
+				this.loading.close();
+				// 跳转登录页
+				LoginManager.handleLogout();
+				this.$router.history.replace('/login');
+			}, 1000);
+		},
+		// 设置
+		goToSetting() {
+			if (this.$route.path === '/settings') return;
+			this.$go('/settings');
+		},
+		// 修改密码
+		async modifyPassword(params) {
+			const res = await this.$fetch({
+				method: 'post',
+				url: '/auth/operator/updatePwdMyself',
+				data: params,
+			});
+			if (res && res.code == 200) {
+				this.logout();
+				this.$message({
+					type: 'success',
+					message: res.message,
+				});
+			}
+		},
+	},
+	mounted() {
+		this.$listen('OPEN_CHANGE_PW_MODAL', this.changePassword);
+	},
+};
+</script>
+
+<style lang="scss" scoped>
+::v-deep.changePasswordModal {
+	.el-form-item {
+		margin-bottom: 15px;
+	}
+}
+.el-header {
+	padding: 0 24px !important;
+}
+.platform-topBar {
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: $bg-control;
+	color: $color-title;
+	font-size: 12px;
+	min-width: 768px;
+	height: 64px;
+	box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+	z-index: 333;
+}
+.logo {
+	display: inline-block;
+	width: 60px;
+	height: 32px;
+	user-select: none;
+}
+.name {
+	margin-left: 20px;
+	border-left: 1px solid #333;
+	font-size: 14px;
+	line-height: 14px;
+	color: #333;
+	text-indent: 20px;
+	user-select: none;
+}
+.env-symbol {
+	margin-left: 8px;
+}
+.operation {
+	font-size: 14px;
+	line-height: 14px;
+	color: #333;
+	border-right: 1px solid #333;
+	padding-right: 20px;
+	margin-right: 20px;
+	user-select: none;
+	cursor: pointer;
+}
+.logout:hover {
+	color: $error;
+}
+.operation:last-child {
+	padding-right: 0;
+	margin-right: 0;
+	border-right-width: 0;
+}
+.blank {
+	flex: 1;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+.setting-icon {
+	font-size: 20px;
+	margin-right: 24px;
+	&:hover {
+		color: $primary;
+	}
+}
+.user-icon {
+	font-size: 16px;
+	margin-right: 4px;
+}
+.username {
+	margin-right: 16px;
+}
+.tips {
+	line-height: 22px;
+	margin-bottom: 16px;
+}
+.person {
+	&:hover {
+		color: $success;
+	}
+}
+.logclose {
+	color: red !important;
+}
+</style>

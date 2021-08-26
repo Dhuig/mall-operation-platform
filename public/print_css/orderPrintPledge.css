@@ -1,0 +1,190 @@
+@import 'print.css';
+
+.sub-title {
+	display: flex;
+	justify-content: space-between;
+	padding-bottom: 1mm;
+	border-bottom: 1px #000 solid;
+	margin-bottom: 4mm;
+	overflow: hidden;
+}
+
+.order-header-bar {
+	margin-top: 2mm;
+	display: flex;
+	justify-content: space-between;
+	padding-bottom: 1mm;
+	border-bottom: 1px #000 solid;
+}
+.sub-title .item,
+.order-header-bar .item {
+	display: flex;
+}
+
+.sub-title .item .label,
+.order-header-bar .item .label {
+	/* margin-right: 2mm; */
+}
+
+.order-header-info {
+	margin-top: 2mm;
+	flex-wrap: wrap;
+	display: flex;
+	flex-direction: column;
+}
+.order-header-info .flex {
+	overflow: hidden;
+	box-sizing: border-box;
+	display: flex;
+	width: 100%;
+}
+.order-header-info .flex .item {
+	flex: 1;
+	overflow: hidden;
+}
+.order-header-info .flex-all .item {
+	flex: 1;
+	overflow: hidden;
+}
+.order-header-info .flex-all {
+	display: flex;
+	overflow: hidden;
+}
+.order-header-info .flex-all .item,
+.order-header-info .flex .item {
+	display: flex;
+	margin-bottom: 2mm;
+	overflow: hidden;
+}
+.order-header-info .value {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+.order-header-info .value span {
+	margin-right: 2mm;
+}
+.order-header-info .value-all {
+	word-break: break-all;
+	max-height: 20pt;
+	overflow: hidden;
+}
+.order-header-info .value-all span {
+	margin-right: 2mm;
+}
+.order-header-info .flex-all .label,
+.order-header-info .flex .label {
+	/* margin-right: 2mm; */
+	white-space: nowrap;
+}
+.page-content {
+	/* background: green; */
+}
+.order-total {
+	/* background: red; */
+	justify-content: space-between;
+	display: flex;
+	margin-top: 2mm;
+	padding: 1mm 0;
+	border-bottom: 1px #000 solid;
+}
+.order-total div {
+	margin-right: 4mm;
+}
+.order-total .order-total-count {
+	flex: 1;
+	margin-right: 0;
+	/* background: red; */
+	text-align: right;
+}
+.order-remark {
+	margin-top: 2mm;
+}
+.order-remark .remark-info {
+	margin-bottom: 2mm;
+}
+.order-remark .sign-info {
+	display: flex;
+}
+.order-remark .sign-info .sign-item {
+	flex: 1;
+}
+.order-remark .sign-info .sign-item span {
+	margin-right: 2mm;
+}
+
+.order-page-count {
+  margin-top: 2mm;
+  text-align: right;
+}
+.page {
+	height: inherit;
+	overflow: inherit;
+}
+.page-sign {
+  overflow: inherit;
+}
+.td-row{
+	border-bottom: 1px solid #000;
+}
+.page-table .td-row:nth-last-child(1){
+	border-bottom: none;
+}
+.th-div {
+  height: inherit;
+  line-height: inherit;
+  white-space: inherit;
+  text-overflow: inherit;
+	overflow: inherit;
+	word-break:break-all;
+	padding:2mm 1mm;
+	border-bottom: none;
+}
+.td-div {
+  white-space: inherit;
+  text-overflow: inherit;
+  overflow: inherit;
+  height: inherit;
+	line-height: inherit;
+	word-break:break-all;
+	padding: 2mm 1mm;
+	border-bottom: none;
+}
+/* 押货退货 */
+.approval_title {
+	padding-top: 20px;
+	font-size: 15px;
+}
+.return_goods_approval{
+	border: 1px solid;
+}
+.return_goods_approval_tr{
+	border-bottom: 1px solid;
+	display: flex;
+}
+.return_goods_approval_tr:nth-last-child(1){
+	border-bottom: none;
+}
+.return_goods_approval_th,.return_goods_approval_td{
+	border-left: 1px solid;
+	display: block;
+	width: 20%;
+	padding: 2mm 1mm;
+}
+.return_goods_approval_th:nth-child(1),.return_goods_approval_td:nth-child(1){
+	border-left: none;
+	width: 8%;
+}
+.approval_info {
+	font-size: 15px;
+	border: 1px solid;
+	display: flex;
+	justify-content: space-between;
+}
+.approval_info .approval_info_span {
+	padding: 2mm 1mm;
+	display: inline-block;
+}
+.approval_info .approval_info_span:nth-child(n + 2) {
+	border-left: 1px solid;
+}

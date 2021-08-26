@@ -1,0 +1,118 @@
+@page {
+  margin: 5mm 12mm;
+}
+body {
+  font-size: 7.5pt;
+  line-height: 1.2;
+  margin: 0;
+  padding: 0;
+}
+.page {
+  box-sizing: border-box;
+  width: 100%;
+  height: 105mm;
+  flex-direction: column;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0;
+  overflow: hidden;
+  page-break-before: always;
+}
+.page-body {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+  flex: 1;
+}
+.page-sign {
+  overflow: hidden;
+}
+.page-footer {
+  flex: 1;
+  text-align: center;
+  line-height: 5mm;
+  overflow: hidden;
+  /* min-height: 5mm; */
+  background: #fff;
+  display: flex;
+  align-items: flex-end;
+  justify-items: center;
+  align-content: center;
+  justify-content: center;
+}
+.page-title {
+  font-weight: bold;
+  font-size: 12pt;
+  text-align: center;
+  line-height: 5mm;
+  overflow: hidden;
+}
+.header {
+  overflow: hidden;
+}
+.page-table {
+  border: 1px #000 solid;
+  display: flex;
+  flex-flow: column;
+  box-sizing: border-box;
+  width: 100%;
+}
+.page-table .th-row,
+.page-table .td-row {
+  display: flex;
+}
+.page-table .last-row .td-div {
+  border-bottom: 0;
+}
+.page-table .last-td-div,
+.page-table .last-th-div {
+  border-right: 0;
+}
+.th-div {
+  height: 6mm;
+  line-height: 6mm;
+  font-weight: bold;
+  text-align: left;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0 1mm;
+  overflow: hidden;
+  box-sizing: border-box;
+  border-bottom: 1px #000 solid;
+  border-right: 1px #000 solid;
+}
+.td-div {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0 1mm;
+  overflow: hidden;
+  height: 6mm;
+  line-height: 6mm;
+  box-sizing: border-box;
+  text-align: left;
+  border-bottom: 1px #000 solid;
+  border-right: 1px #000 solid;
+}
+.page-hr {
+  height: 1mm;
+  line-height: 1mm;
+  display: none;
+}
+/* 审批 */
+.approval {
+  margin-top: 4mm;
+  border-bottom: 1px solid #232426;
+}
+.approval .approval_box {
+	padding: 5px 15px;
+	font-size: 15px;
+  border: 1px solid #232426;
+  border-bottom: none;
+}
+.approval .approval_box .approval_con {
+	height: 80px;
+	display: block;
+}
+.approval .approval_box .approved_by span {
+	margin-right: 15px;
+}

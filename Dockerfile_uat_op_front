@@ -1,0 +1,17 @@
+# STEP 1: Build  pc商城
+FROM node:10.16
+LABEL authors="zhaozhifeng"
+COPY package.json package-lock.json ./
+RUN npm set progress=false && npm config set depth 0 && npm cache clean --force 
+RUN npm i && mkdir /app
+WORKDIR /app
+COPY . .
+RUN npm install && npm run build:uat
+ 
+# STEP 2: Setup
+FROM nginx:1.17
+# 在k8s环境下，将conf文件以configmap形式进行映射，测试docker环境下需要放开
+#COPY --from=0 /app/_nginx/nginx.conf /etc/nginx/nginx.conf
+#COPY --from=0 /app/_nginx/* /etc/nginx/
+COPY --from=0 /app/dist /etc/nginx/html
+CMD [ "nginx", "-g", "daemon off;"]
